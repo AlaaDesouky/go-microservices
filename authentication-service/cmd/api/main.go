@@ -1,6 +1,7 @@
 package main
 
 import (
+	"authentication/data"
 	"database/sql"
 	"fmt"
 	"log"
@@ -18,6 +19,7 @@ var count int64
 
 type Config struct{
 	DB *sql.DB
+	Models data.Models
 }
 
 func main() {
@@ -28,6 +30,7 @@ func main() {
 	
 	app := Config{
 		DB: dbConn,
+		Models: data.New(dbConn),
 	}
 	
 	srv := &http.Server{
