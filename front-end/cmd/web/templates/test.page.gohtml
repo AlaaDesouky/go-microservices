@@ -6,6 +6,7 @@
             <div class="col">
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
+                <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -31,6 +32,29 @@
 
 {{define "js"}}
     <script>
+        let brokerBtn = document.getElementById("brokerBtn")
+        let outputDiv = document.getElementById("output")
+        let paylodDiv = document.getElementById("payload")
+        let receivedDiv = document.getElementById("received")
+
+        brokerBtn.addEventListener("click", async () => {
         
+            const body = {
+                method: "POST"
+            }
+
+            try {
+                const response = await fetch("http:\/\/localhost:8080", body)
+                const data = await response.json()
+
+                paylodDiv.innerHTML = "empty post request"
+                receivedDiv.innerHTML = JSON.stringify(data, undefined, 4)
+                outputDiv.innerHTML += `<br><strong>${data.error ? "Error" : "Response"} from broker servcie</strong>: ${data.message}`
+                
+            } catch (error) {
+                outputDiv.innerHTML += `<br>Error: ${error}`
+            }
+        })
+
     </script>
 {{end}}
