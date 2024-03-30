@@ -1,6 +1,9 @@
 workspace.code-workspace
+
 brokerApp
 authApp
+loggerApp
+
 frontApp.exe
 
 **/project/db-data
