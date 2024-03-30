@@ -8,10 +8,21 @@ import (
 
 const webPort = "80"
 
-type Config struct{}
+type services struct {
+	auth string
+	log string
+}
+type Config struct{
+	services services
+}
 
 func main() {
-	app := Config{}
+	app := Config{
+		services: services{
+			auth: "http://authentication-service",
+			log: "http://logger-service",
+		},
+	}
 
 	log.Printf("Starting broker service on port %s\n", webPort)
 
