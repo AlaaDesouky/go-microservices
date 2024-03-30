@@ -7,6 +7,7 @@
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
                 <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
+                <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Auth</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -33,28 +34,52 @@
 {{define "js"}}
     <script>
         let brokerBtn = document.getElementById("brokerBtn")
+        let authBrokerBtn = document.getElementById("authBrokerBtn")
         let outputDiv = document.getElementById("output")
         let paylodDiv = document.getElementById("payload")
         let receivedDiv = document.getElementById("received")
 
         brokerBtn.addEventListener("click", async () => {
-        
             const body = {
                 method: "POST"
             }
+            await sendRequset("http:\/\/localhost:8080", body)
+        })
 
+        authBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "auth",
+                auth: {
+                    email: "admin@example.com",
+                    password: "verysecret"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset("http:\/\/localhost:8080/handle", body, "auth")
+        })
+
+        async function sendRequset(url, body, service = "broker") {
             try {
-                const response = await fetch("http:\/\/localhost:8080", body)
+                const response = await fetch(url, body)
                 const data = await response.json()
 
-                paylodDiv.innerHTML = "empty post request"
+                paylodDiv.innerHTML = body?.body ? body.body : "empty post request"
                 receivedDiv.innerHTML = JSON.stringify(data, undefined, 4)
-                outputDiv.innerHTML += `<br><strong>${data.error ? "Error" : "Response"} from broker servcie</strong>: ${data.message}`
+                outputDiv.innerHTML += `<br><strong>${data.error ? "Error" : "Response"} from ${service} servcie</strong>: ${data.message}`
                 
             } catch (error) {
-                outputDiv.innerHTML += `<br>Error: ${error}`
+                outputDiv.innerHTML += `<br><strong>Error</strong>: ${error}`
             }
-        })
+        }
 
     </script>
 {{end}}
