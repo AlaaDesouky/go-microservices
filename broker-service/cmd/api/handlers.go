@@ -52,7 +52,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		return
 	}
 
-	client := http.Client{}
+	client := &http.Client{}
 
 	response, err := client.Do(request)
 		if err != nil {
@@ -66,6 +66,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		return
 	} else if response.StatusCode != http.StatusAccepted{
 		app.errorJSON(w, errors.New("error calling auth service"))
+		return
 	}
 
 	var jsonFromService jsonResponse
