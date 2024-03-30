@@ -43,7 +43,7 @@ func main() {
 		Models: data.New(client),
 	}
 
-	go app.serve()
+	app.serve()
 }
 
 func (app *Config) serve() {
@@ -71,5 +71,6 @@ func connectToMongo() (*mongo.Client, error) {
 		return nil, err
 	}
 
+	log.Println("Connected to mongoDB")
 	return c, nil
 }
