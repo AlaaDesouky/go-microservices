@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"logger/data"
 	"net/http"
 	"time"
 
@@ -18,7 +19,9 @@ const (
 
 var client *mongo.Client
 
-type Config struct{}
+type Config struct{
+	Models data.Models
+}
 
 func main() {
 	mongoClient, err := connectToMongo()
@@ -36,7 +39,9 @@ func main() {
 		}
 	}()
 
-	app := Config{}
+	app := Config{
+		Models: data.New(client),
+	}
 
 	go app.serve()
 }
