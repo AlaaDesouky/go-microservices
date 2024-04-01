@@ -3,6 +3,7 @@ workspace.code-workspace
 brokerApp
 authApp
 loggerApp
+mailerApp
 
 frontApp.exe
 
