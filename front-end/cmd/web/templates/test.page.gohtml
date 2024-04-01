@@ -9,6 +9,7 @@
                 <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
                 <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Auth</a>
                 <a id="loggerBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger</a>
+                <a id="mailBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Mail</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -40,6 +41,7 @@
         let brokerBtn = document.getElementById("brokerBtn")
         let authBrokerBtn = document.getElementById("authBrokerBtn")
         let loggerBrokerBtn = document.getElementById("loggerBrokerBtn")
+        let mailBrokerBtn = document.getElementById("mailBrokerBtn")
         let outputDiv = document.getElementById("output")
         let paylodDiv = document.getElementById("payload")
         let receivedDiv = document.getElementById("received")
@@ -91,6 +93,29 @@
             }
 
             await sendRequset(handleURI, body, "log")
+        })
+
+        mailBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "mail",
+                mail: {
+                    from: "me@example.com",
+                    to: "you@there.com",
+                    subject: "Test email",
+                    message: "Hello world!",
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "mail")
         })
 
         async function sendRequset(url, body, service = "broker") {
