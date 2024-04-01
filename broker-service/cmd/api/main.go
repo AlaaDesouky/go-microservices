@@ -11,6 +11,7 @@ const webPort = "80"
 type services struct {
 	auth string
 	log string
+	mail string
 }
 type Config struct{
 	services services
@@ -21,6 +22,7 @@ func main() {
 		services: services{
 			auth: "http://authentication-service",
 			log: "http://logger-service",
+			mail: "http://mail-service",
 		},
 	}
 
