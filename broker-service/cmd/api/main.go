@@ -22,7 +22,7 @@ func main() {
 		services: services{
 			auth: "http://authentication-service",
 			log: "http://logger-service",
-			mail: "http://mail-service",
+			mail: "http://mailer-service",
 		},
 	}
 
