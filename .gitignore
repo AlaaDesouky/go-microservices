@@ -4,6 +4,7 @@ brokerApp
 authApp
 loggerApp
 mailerApp
+listenerApp
 
 frontApp.exe
 
