@@ -9,6 +9,7 @@
                 <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
                 <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Auth</a>
                 <a id="loggerBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger</a>
+                <a id="loggerRMQBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger RMQ</a>
                 <a id="mailBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Mail</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
@@ -41,6 +42,7 @@
         let brokerBtn = document.getElementById("brokerBtn")
         let authBrokerBtn = document.getElementById("authBrokerBtn")
         let loggerBrokerBtn = document.getElementById("loggerBrokerBtn")
+        let loggerRMQBrokerBtn = document.getElementById("loggerRMQBrokerBtn")
         let mailBrokerBtn = document.getElementById("mailBrokerBtn")
         let outputDiv = document.getElementById("output")
         let paylodDiv = document.getElementById("payload")
@@ -93,6 +95,27 @@
             }
 
             await sendRequset(handleURI, body, "log")
+        })
+
+        loggerRMQBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "log_rmq",
+                log: {
+                    name: "rmq event",
+                    data: "Some kind of data"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "log_rmq")
         })
 
         mailBrokerBtn.addEventListener("click", async () => {
