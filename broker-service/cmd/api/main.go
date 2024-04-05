@@ -16,6 +16,7 @@ const webPort = "80"
 type services struct {
 	auth string
 	log string
+	logRPC string
 	mail string
 }
 type Config struct{
@@ -36,6 +37,7 @@ func main() {
 		services: services{
 			auth: "http://authentication-service",
 			log: "http://logger-service",
+			logRPC: "logger-service:5001",
 			mail: "http://mailer-service",
 		},
 		Rabbit: rabbitConn,

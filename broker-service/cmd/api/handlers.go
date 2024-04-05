@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/rpc"
 )
 
 type RequestPayload struct {
@@ -31,6 +32,11 @@ type MailPayload struct {
 	To string `json:"to"`
 	Subject string `json:"subject"`
 	Message string `json:"message"`
+}
+
+type RPCPayload struct {
+	Name string
+	Data string
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +65,9 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request){
 
 	case "log_rmq":
 		app.logEventViaRabbit(w, requestPayload.Log)
+
+	case "log_rpc":
+		app.logEventViaRPC(w, requestPayload.Log)
 	
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
@@ -212,4 +221,30 @@ func (app *Config) pushToQueue(name, msg string) error {
 	}
 
 	return nil
+}
+
+func (app *Config) logEventViaRPC(w http.ResponseWriter, l LogPayload) {
+	client, err := rpc.Dial("tcp", app.services.logRPC)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	rpcPayload := RPCPayload{
+		Name: l.Name,
+		Data: l.Data,
+	}
+
+	var result string
+	if err := client.Call("RPCServer.LogInfo", rpcPayload, &result); err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:  false,
+		Message: result,
+	}
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
