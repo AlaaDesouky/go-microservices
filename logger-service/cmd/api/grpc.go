@@ -32,7 +32,7 @@ func (l *LogServer) WriteLog(ctx context.Context, r *logs.LogRequest) (*logs.Log
 	}
 
 	res := &logs.LogResponse{
-		Result: "logged!",
+		Result: "logged via gRPC!",
 	}
 
 	return res, nil
