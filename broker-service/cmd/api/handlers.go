@@ -259,7 +259,7 @@ func (app *Config) logEventViaRPC(w http.ResponseWriter, l LogPayload) {
 }
 
 func (app *Config) logEventViaGRPC(w http.ResponseWriter, l LogPayload){
-	conn, err := grpc.NewClient(app.services.logRPC, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.NewClient(app.services.logGRPC, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		app.errorJSON(w, err)
 		return
@@ -270,7 +270,7 @@ func (app *Config) logEventViaGRPC(w http.ResponseWriter, l LogPayload){
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err = c.WriteLog(ctx, &logs.LogRequest{
+	response, err := c.WriteLog(ctx, &logs.LogRequest{
 		LogEntry: &logs.Log{
 			Name: l.Name,
 			Data: l.Data,
@@ -284,7 +284,7 @@ func (app *Config) logEventViaGRPC(w http.ResponseWriter, l LogPayload){
 
 	payload := jsonResponse{
 		Error: false,
-		Message: "logged",
+		Message: response.Result,
 	}
 
 	app.writeJSON(w, http.StatusAccepted, payload)
