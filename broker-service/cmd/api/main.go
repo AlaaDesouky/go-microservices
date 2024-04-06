@@ -17,6 +17,7 @@ type services struct {
 	auth string
 	log string
 	logRPC string
+	logGRPC string
 	mail string
 }
 type Config struct{
@@ -38,6 +39,7 @@ func main() {
 			auth: "http://authentication-service",
 			log: "http://logger-service",
 			logRPC: "logger-service:5001",
+			logGRPC: "logger-service:50001",
 			mail: "http://mailer-service",
 		},
 		Rabbit: rabbitConn,
