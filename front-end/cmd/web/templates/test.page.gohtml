@@ -1,0 +1,205 @@
+{{template "base" .}}
+
+{{define "content" }}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-5">Test microservices</h1>
+                <hr>
+                <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
+                <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Auth</a>
+                <a id="loggerBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger</a>
+                <a id="loggerRMQBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger RMQ</a>
+                <a id="loggerRPCBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger RPC</a>
+                <a id="loggerGRPCBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Logger gRPC</a>
+                <a id="mailBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Mail</a>
+
+                <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
+                    <span class="text-muted">Output shows here...</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h4 class="mt-5">Sent</h4>
+                <div class="mt-1" style="outline: 1px solid silver; padding: 2em;">
+                    <pre id="payload"><span class="text-muted">Nothing sent yet...</span></pre>
+                </div>
+            </div>
+            <div class="col">
+                <h4 class="mt-5">Received</h4>
+                <div class="mt-1" style="outline: 1px solid silver; padding: 2em;">
+                    <pre id="received"><span class="text-muted">Nothing received yet...</span></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "js"}}
+    <script>
+        const baseURI = "http:\/\/localhost:8080"
+        const handleURI = baseURI + "/handle"
+
+        let brokerBtn = document.getElementById("brokerBtn")
+        let authBrokerBtn = document.getElementById("authBrokerBtn")
+        let loggerBrokerBtn = document.getElementById("loggerBrokerBtn")
+        let loggerRMQBrokerBtn = document.getElementById("loggerRMQBrokerBtn")
+        let loggerRPCBrokerBtn = document.getElementById("loggerRPCBrokerBtn")
+        let loggerGRPCBrokerBtn = document.getElementById("loggerGRPCBrokerBtn")
+        let mailBrokerBtn = document.getElementById("mailBrokerBtn")
+        let outputDiv = document.getElementById("output")
+        let paylodDiv = document.getElementById("payload")
+        let receivedDiv = document.getElementById("received")
+
+        brokerBtn.addEventListener("click", async () => {
+            const body = {
+                method: "POST"
+            }
+            await sendRequset(baseURI, body)
+        })
+
+        authBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "auth",
+                auth: {
+                    email: "admin@example.com",
+                    password: "verysecret"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "auth")
+        })
+
+        loggerBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "log",
+                log: {
+                    name: "event",
+                    data: "Some kind of data"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "log")
+        })
+
+        loggerRMQBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "log_rmq",
+                log: {
+                    name: "rmq event",
+                    data: "Some kind of data"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "log_rmq")
+        })
+
+        loggerRPCBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "log_rpc",
+                log: {
+                    name: "rpc event",
+                    data: "some kind of data"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "log_rpc")
+        })
+
+        loggerGRPCBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "log_grpc",
+                log: {
+                    name: "grpc event",
+                    data: "some kind of data"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "log_grpc")
+        })
+
+        mailBrokerBtn.addEventListener("click", async () => {
+            const payload = {
+                action: "mail",
+                mail: {
+                    from: "me@example.com",
+                    to: "you@there.com",
+                    subject: "Test email",
+                    message: "Hello world!",
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload, undefined, 4),
+                headers,
+            }
+
+            await sendRequset(handleURI, body, "mail")
+        })
+
+        async function sendRequset(url, body, service = "broker") {
+            try {
+                const response = await fetch(url, body)
+                const data = await response.json()
+
+                paylodDiv.innerHTML = body?.body ? body.body : "empty post request"
+                receivedDiv.innerHTML = JSON.stringify(data, undefined, 4)
+                outputDiv.innerHTML += `<br><strong>${data.error ? "Error" : "Response"} from ${service} servcie</strong>: ${data.message}`
+                
+            } catch (error) {
+                outputDiv.innerHTML += `<br><strong>Error</strong>: ${error}`
+            }
+        }
+
+    </script>
+{{end}}
